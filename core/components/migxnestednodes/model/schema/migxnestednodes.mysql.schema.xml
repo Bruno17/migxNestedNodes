@@ -34,6 +34,7 @@
     
     <object class="mnnNodeNodeSelection" table="mnn_node_node_selections" extends="xPDOSimpleObject">
         
+        <field key="resource_id" dbtype="int" precision="10" phptype="integer" null="false" default="0" index="index" />
         <field key="node_id" dbtype="int" precision="10" phptype="integer" null="false" default="0" index="index" />
         <field key="childnode_id" dbtype="int" precision="10" phptype="integer" null="false" default="0" index="index" />	
         <field key="pos" dbtype="int" precision="10" phptype="integer" null="false" default="0" index="index" />

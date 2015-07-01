@@ -6,6 +6,7 @@ $xpdo_meta_map['mnnNodeNodeSelection']= array (
   'extends' => 'xPDOSimpleObject',
   'fields' => 
   array (
+    'resource_id' => 0,
     'node_id' => 0,
     'childnode_id' => 0,
     'pos' => 0,
@@ -13,6 +14,15 @@ $xpdo_meta_map['mnnNodeNodeSelection']= array (
   ),
   'fieldMeta' => 
   array (
+    'resource_id' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '10',
+      'phptype' => 'integer',
+      'null' => false,
+      'default' => 0,
+      'index' => 'index',
+    ),
     'node_id' => 
     array (
       'dbtype' => 'int',

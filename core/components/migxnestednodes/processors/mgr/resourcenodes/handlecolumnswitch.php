@@ -13,29 +13,37 @@ $classname = $config['classname'];
 
 $configs = $modx->getOption('configs', $scriptProperties, 0);
 
+$resource_id = $modx->getOption('resource_id', $scriptProperties, 0);
+$co_id = $modx->getOption('co_id', $scriptProperties, 0); 
+$object_id = $modx->getOption('object_id', $scriptProperties, 0);
+
 switch ($configs) {
     case 'mnn_resourcenodes':
         $joinclass = 'mnnResourceNodeSelection';
-        $source_field = 'resource_id';
-        $target_field = 'node_id';
-        $resource_id = $modx->getOption('resource_id', $scriptProperties, 0);
+        
+        $fields = array();
+        $fields['resource_id'] = $resource_id;
+        $fields['node_id'] = $object_id;
+        
         break;
     case 'mnn_nodenodes':
         $joinclass = 'mnnNodeNodeSelection';
-        $source_field = 'node_id';
-        $target_field = 'childnode_id';
-        $resource_id = $modx->getOption('co_id', $scriptProperties, 0);        
+        
+        $fields = array();
+        $fields['resource_id'] = $resource_id;
+        $fields['node_id'] = $co_id;
+        $fields['childnode_id'] = $object_id;        
+        
         break;
 }
 
-
-
-$object_id = $modx->getOption('object_id', $scriptProperties, 0);
 
 switch ($scriptProperties['idx']) {
     case '1':
 
         //get max position
+        
+        /*
         $resCategories = array();
         $positions = array();
         $c = $modx->newQuery($joinclass);
@@ -43,33 +51,32 @@ switch ($scriptProperties['idx']) {
         $c->sortby('pos', 'DESC');
         $c->limit('1');
         $c->prepare();
-        //echo $c->toSql();
         $pos = 0;
         if ($object = $modx->getObject($joinclass, $c)) {
             $pos = $object->get('pos');
         }
 
         $pos = $pos + 1;
+        */
 
-        if ($joinobject = $modx->getObject($joinclass, array($source_field => $resource_id, $target_field => $object_id))) {
+        if ($joinobject = $modx->getObject($joinclass, $fields)) {
 
         } else {
             $joinobject = $modx->newObject($joinclass);
-            $joinobject->set('pos', $pos);
-            $joinobject->set($source_field, $resource_id);
-            $joinobject->set($target_field, $object_id);
+            //$joinobject->set('pos', $pos);
+            $joinobject->fromArray($fields);
         }
         $joinobject->save();
         break;
     case '0':
-        if ($joinobject = $modx->getObject($joinclass, array($source_field => $resource_id, $target_field => $object_id))) {
+        if ($joinobject = $modx->getObject($joinclass, $fields)) {
             $joinobject->remove();
 
+            /*
             $c = $modx->newQuery($joinclass);
             $c->where(array($target_field => $object_id));
             $c->sortby('pos');
             $c->prepare();
-            //echo $c->toSql();
             $pos = 0;
             if ($collection = $modx->getCollection($joinclass, $c)) {
                 $pos = 1;
@@ -79,6 +86,8 @@ switch ($scriptProperties['idx']) {
                     $pos++;
                 }
             }
+            */
+            
         }
         break;
     default:

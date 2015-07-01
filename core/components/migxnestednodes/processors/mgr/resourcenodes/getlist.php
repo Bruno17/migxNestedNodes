@@ -62,8 +62,10 @@ $dir = !empty($config['getlistsortdir']) ? $config['getlistsortdir'] : 'ASC';
 $dir = $modx->getOption('dir', $scriptProperties, $dir);
 $showtrash = $modx->getOption('showtrash', $scriptProperties, '');
 $object_id = $modx->getOption('object_id', $scriptProperties, '');
-$resource_id = $modx->getOption('resource_id', $scriptProperties, is_object($modx->resource) ? $modx->resource->get('id') : false);
-$resource_id = !empty($object_id) ? $object_id : $resource_id;
+$resource_id = $modx->getOption('resource_id', $scriptProperties, '');
+
+//$resource_id = $modx->getOption('resource_id', $scriptProperties, is_object($modx->resource) ? $modx->resource->get('id') : false);
+//$resource_id = !empty($object_id) ? $object_id : $resource_id;
 
 
 
@@ -127,11 +129,11 @@ if (isset($config['gridfilters']) && count($config['gridfilters']) > 0) {
 }
 
 
-if ($modx->migx->checkForConnectedResource($resource_id, $config)) {
+if ($modx->migx->checkForConnectedResource($object_id, $config)) {
     if (!empty($joinalias)) {
-        $c->where(array($joinalias . '.' . $joinfield => $resource_id));
+        $c->where(array($joinalias . '.' . $joinfield => $object_id));
     } else {
-        $c->where(array($classname . '.resource_id' => $resource_id));
+        $c->where(array($classname . '.resource_id' => $object_id));
     }
 }
 
@@ -171,13 +173,20 @@ $configs = $modx->getOption('configs', $scriptProperties, 0);
 switch ($configs) {
     case 'mnn_resourcenodes':
         $joinclass = 'mnnResourceNodeSelection';
-        $source_field = 'resource_id';
+        
+        $fields = array();
+        $fields['resource_id'] = $resource_id;
         $target_field = 'node_id';
+        
         break;
     case 'mnn_nodenodes':
         $joinclass = 'mnnNodeNodeSelection';
-        $source_field = 'node_id';
-        $target_field = 'childnode_id';        
+        
+        $fields = array();
+        $fields['resource_id'] = $resource_id;
+        $fields['node_id'] = $object_id;
+        $target_field = 'childnode_id';
+        
         break;
 }
 
@@ -185,11 +194,11 @@ switch ($configs) {
 $resCategories = array();
 $positions = array();
 $c2 = $modx->newQuery($joinclass);
-$c2->where(array($source_field=>$resource_id));
+$c2->where($fields);
 if ($resCategoryCollection = $modx->getCollection($joinclass,$c2)){
     foreach ($resCategoryCollection as $resCategoryObject){
         $resCategories[] = $resCategoryObject->get($target_field);
-        $positions[$resCategoryObject->get($target_field)] = $resCategoryObject->get('pos');
+        //$positions[$resCategoryObject->get($target_field)] = $resCategoryObject->get('pos');
     }
 }
 
@@ -204,7 +213,7 @@ if ($collection = $xpdo->getCollection($classname, $c)) {
         $row = $object->toArray();
         $row['id'] = !isset($row['id']) ? $row[$pk] : $row['id'];
         $row['joined'] = in_array($row['id'],$resCategories) ? '1' : '0';
-        $row['pos'] = $positions[$row['id']];
+        //$row['pos'] = $positions[$row['id']];
         $rows[] = $row;
     }
 }
