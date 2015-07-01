@@ -1,0 +1,12 @@
+Create a migxdb-TV with configs = mnn_resourcenodes.<br/>
+Get the results:<br/>
+
+
+[[migxLoopCollection?
+&packageName=`migxnestednodes`
+&classname=`mnnNodeNodeSelection`
+&joins=`[{"alias":"Node"},{"alias":"Child"}]`
+&where=`{"resource_id":"[[*id]]"}`
+&tpl=`@CODE:[[+Node_name]]:[[+Child_name]]<br/>`
+&sortConfig=`[{"sortby":"Node.name"}]`
+]]
