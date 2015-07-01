@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model package="migxnestednodes" baseClass="xPDOObject" platform="mysql" defaultEngine="MyISAM" version="1.1">
+    <object class="mnnNode" table="mnn_nodes" extends="xPDOSimpleObject">
+        
+        <field key="name" dbtype="varchar" precision="255" phptype="string" null="false" default="" index="index" />
+        <field key="pos" dbtype="int" precision="10" phptype="integer" null="false" default="0" index="index" />
+        <field key="extended" dbtype="text" phptype="json" null="false" default="" />
+       
+        <composite alias="ResourceNodeSelections" class="mnnResourceNodeSelection" local="id" foreign="resource_id" cardinality="many" owner="local" />
+        <composite alias="Children" class="mnnChildNode" local="id" foreign="node_id" cardinality="many" owner="local" />
+    </object> 
+    
+    <object class="mnnChildNode" table="mnn_child_nodes" extends="xPDOSimpleObject">
+        
+        <field key="name" dbtype="varchar" precision="255" phptype="string" null="false" default="" index="index" />
+        <field key="node_id" dbtype="int" precision="10" phptype="integer" null="false" default="0" index="index" />
+        <field key="pos" dbtype="int" precision="10" phptype="integer" null="false" default="0" index="index" />
+        <field key="extended" dbtype="text" phptype="json" null="false" default="" />
+       
+        <composite alias="NodeNodeSelections" class="mnnNodeNodeSelection" local="id" foreign="node_id" cardinality="many" owner="local" />
+        <aggregate alias="Node" class="mnnNode" local="node_id" foreign="id" cardinality="one" owner="foreign" /> 
+    </object>     
+    
+    <object class="mnnResourceNodeSelection" table="mnn_resource_node_selections" extends="xPDOSimpleObject">
+        
+        <field key="resource_id" dbtype="int" precision="10" phptype="integer" null="false" default="0" index="index" />
+        <field key="node_id" dbtype="int" precision="10" phptype="integer" null="false" default="0" index="index" />	
+        <field key="pos" dbtype="int" precision="10" phptype="integer" null="false" default="0" index="index" />
+        <field key="extended" dbtype="text" phptype="json" null="false" default="" />
+       
+        <aggregate alias="Resource" class="modResource" local="resource_id" foreign="id" cardinality="one" owner="foreign" />
+        <aggregate alias="Node" class="mnnNode" local="node_id" foreign="id" cardinality="one" owner="foreign" />          
+    </object>
+    
+    <object class="mnnNodeNodeSelection" table="mnn_node_node_selections" extends="xPDOSimpleObject">
+        
+        <field key="node_id" dbtype="int" precision="10" phptype="integer" null="false" default="0" index="index" />
+        <field key="childnode_id" dbtype="int" precision="10" phptype="integer" null="false" default="0" index="index" />	
+        <field key="pos" dbtype="int" precision="10" phptype="integer" null="false" default="0" index="index" />
+        <field key="extended" dbtype="text" phptype="json" null="false" default="" />
+       
+        <aggregate alias="Node" class="mnnNode" local="node_id" foreign="id" cardinality="one" owner="foreign" />
+        <aggregate alias="Child" class="mnnChildNode" local="childnode_id" foreign="id" cardinality="one" owner="foreign" />          
+    </object>    
+    
+</model>   
